@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Зураг</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #fff;
+      text-align: center;
+    }
+
+    .main-img {
+      width: 90%;
+      margin: 30px auto;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .main-img:hover {
+      transform: scale(1.02);
+    }
+
+    .slider-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .slider {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slides {
+      display: flex;
+      transition: transform 0.4s ease-in-out;
+    }
+
+    .slide {
+      min-width: 100%;
+      box-sizing: border-box;
+      transition: transform 0.3s;
+    }
+
+    .slide img {
+      width: 100%;
+      border-radius: 10px;
+      transform: scale(0.9);
+      opacity: 0.7;
+    }
+
+    .slide.active img {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .back-btn, .next-btn, .prev-btn {
+      margin: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Үндсэн зураг -->
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/refs/heads/main/img/fc9944c8-0033-455b-8c18-2a0b67ae5bf5%20(1).jpg" alt="Үндсэн зураг" class="main-img" id="mainImage" onclick="showSlider()">
+
+<!-- Slide галерей -->
+<div class="slider-container" id="sliderContainer">
+  <button class="back-btn" onclick="hideSlider()">Буцах</button>
+
+  <div class="slider">
+    <div class="slides" id="slides">
+      <div class="slide"><img src="https://raw.githubusercontent.com/tsogoo1211/QR/refs/heads/main/img/198f2018-b0d3-4ce8-a3c6-9d2d06e183e0.jpg" alt=""></div>
+      <div class="slide"><img src="https://raw.githubusercontent.com/tsogoo1211/QR/refs/heads/main/img/27209e01-ca54-4225-8abc-034ec91e4a36%20(1).jpg" alt=""></div>
+      <div class="slide"><img src="https://raw.githubusercontent.com/tsogoo1211/QR/refs/heads/main/img/2c3d4134-305b-438e-8fe0-44a008f79c30%20(1).jpg" alt=""></div>
+      <div class="slide"><img src="https://raw.githubusercontent.com/tsogoo1211/QR/refs/heads/main/img/3178a06d-6f26-4acc-95e9-a364e4b7884d.jpg" alt=""></div>
+      <div class="slide"><img src="https://raw.githubusercontent.com/tsogoo1211/QR/refs/heads/main/img/42bf4efb-e9b7-4f8e-90d0-f403921bb004%20(1).jpg" alt=""></div>
+      <div class="slide"><img src="https://raw.githubusercontent.com/tsogoo1211/QR/refs/heads/main/img/50057d9a-a074-46eb-97ad-bd89fabba166.jpg" alt=""></div>
+    </div>
+  </div>
+
+  
+</div>
+
+<script>
+  let startX = 0;
+  let currentX = 0;
+  let currentIndex = 0;
+  const slides = document.getElementById('slides');
+  const totalSlides = slides.children.length;
+
+  function showSlider() {
+    document.getElementById('mainImage').style.display = 'none';
+    document.getElementById('sliderContainer').style.display = 'flex';
+    updateSlide();
+  }
+
+  function hideSlider() {
+    document.getElementById('mainImage').style.display = 'block';
+    document.getElementById('sliderContainer').style.display = 'none';
+  }
+
+  function updateSlide() {
+    slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }
+
+  // Touch Events
+  const slider = document.getElementById('slider');
+
+  slider.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  slider.addEventListener('touchmove', (e) => {
+    currentX = e.touches[0].clientX;
+  });
+
+  slider.addEventListener('touchend', () => {
+    let diff = startX - currentX;
+    if (diff > 50) {
+      // swipe left
+      currentIndex = (currentIndex + 1) % totalSlides;
+    } else if (diff < -50) {
+      // swipe right
+      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    }
+    updateSlide();
+  });
+</script>
+
+</body>
+</html>
