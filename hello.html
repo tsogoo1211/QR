@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Танилц</title>
+  <title>Pro Танилц</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
@@ -16,7 +16,7 @@
     }
     header {
       text-align: center;
-      padding: 5px 10px 15px;
+      padding: 10px;
       font-size: 1.8rem;
       font-weight: bold;
       animation: fadeDown 0.6s ease;
@@ -40,20 +40,11 @@
       transform: scale(0.9);
       transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
-    .grid img:nth-child(1) { animation-delay: 0.1s; }
-    .grid img:nth-child(2) { animation-delay: 0.2s; }
-    .grid img:nth-child(3) { animation-delay: 0.3s; }
-    .grid img:nth-child(4) { animation-delay: 0.4s; }
-    .grid img:nth-child(5) { animation-delay: 0.5s; }
-    .grid img:nth-child(6) { animation-delay: 0.6s; }
-    .grid img:nth-child(7) { animation-delay: 0.7s; }
-    .grid img:nth-child(8) { animation-delay: 0.8s; }
-    .grid img:nth-child(9) { animation-delay: 0.9s; }
-
     .grid img:hover {
       transform: scale(1.05) rotateZ(2deg);
       box-shadow: 0 6px 20px rgba(0,0,0,0.5);
     }
+    .grid img:nth-child(n) { animation-delay: calc(var(--i) * 0.1s); }
     .slider-container {
       display: none;
       flex-direction: column;
@@ -91,6 +82,26 @@
       border-radius: 10px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.7);
     }
+    .thumbnails {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      gap: 5px;
+    }
+    .thumbnails img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.3s, border 0.3s;
+      border-radius: 4px;
+    }
+    .thumbnails img.active {
+      border: 2px solid #007bff;
+      transform: scale(1.1);
+    }
     .controls {
       margin: 15px 0 0;
       display: flex;
@@ -119,7 +130,6 @@
       color: #ccc;
     }
 
-    /* Animations */
     @keyframes fadeDown {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -139,24 +149,25 @@
 </head>
 <body>
 
-<header>Танилц</header>
+<header>Pro Танилц</header>
 
 <div class="grid" id="grid">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG0.JPG" onclick="showSlider(0)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG1.JPG" onclick="showSlider(1)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG2.JPG" onclick="showSlider(2)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG3.JPG" onclick="showSlider(3)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG4.JPG" onclick="showSlider(4)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG5.JPG" onclick="showSlider(5)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG6.JPG" onclick="showSlider(6)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG7.JPG" onclick="showSlider(7)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG8.JPG" onclick="showSlider(8)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG0.JPG" style="--i:1;" onclick="showSlider(0)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG1.JPG" style="--i:2;" onclick="showSlider(1)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG2.JPG" style="--i:3;" onclick="showSlider(2)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG3.JPG" style="--i:4;" onclick="showSlider(3)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG4.JPG" style="--i:5;" onclick="showSlider(4)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG5.JPG" style="--i:6;" onclick="showSlider(5)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG6.JPG" style="--i:7;" onclick="showSlider(6)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG7.JPG" style="--i:8;" onclick="showSlider(7)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG8.JPG" style="--i:9;" onclick="showSlider(8)">
 </div>
 
 <div class="slider-container" id="sliderContainer">
   <div class="slider" id="slider">
     <div class="slides" id="slides"></div>
   </div>
+  <div class="thumbnails" id="thumbnails"></div>
   <div class="controls">
     <button onclick="prevSlide()">⟨ Өмнөх</button>
     <button onclick="hideSlider()">Буцах</button>
@@ -171,16 +182,19 @@
 
 <script>
   const slidesWrapper = document.getElementById('slides');
+  const thumbsWrapper = document.getElementById('thumbnails');
   const sliderContainer = document.getElementById('sliderContainer');
   const grid = document.getElementById('grid');
 
-  let totalSlides = 9; // бүгд 9 зурагтай
+  let totalSlides = 9;
   let currentIndex = 0;
+  let interval;
 
   function showSlider(index) {
     currentIndex = 0;
-
     slidesWrapper.innerHTML = '';
+    thumbsWrapper.innerHTML = '';
+
     for (let i = 1; i <= totalSlides; i++) {
       const div = document.createElement('div');
       div.className = 'slide';
@@ -188,16 +202,23 @@
       img.src = `https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG${index}_${i}.JPG`;
       div.appendChild(img);
       slidesWrapper.appendChild(div);
+
+      const thumb = document.createElement('img');
+      thumb.src = img.src;
+      thumb.onclick = () => { currentIndex = i - 1; updateSlide(); };
+      thumbsWrapper.appendChild(thumb);
     }
 
     grid.style.display = 'none';
     sliderContainer.style.display = 'flex';
     updateSlide();
+    startAutoPlay();
   }
 
   function hideSlider() {
     sliderContainer.style.display = 'none';
     grid.style.display = 'grid';
+    clearInterval(interval);
   }
 
   function updateSlide() {
@@ -205,6 +226,10 @@
       slide.classList.toggle('active', idx === currentIndex);
     });
     slidesWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+    document.querySelectorAll('.thumbnails img').forEach((thumb, idx) => {
+      thumb.classList.toggle('active', idx === currentIndex);
+    });
   }
 
   function prevSlide() {
@@ -217,14 +242,16 @@
     updateSlide();
   }
 
-  let startX = 0;
-  let isSwiping = false;
+  function startAutoPlay() {
+    clearInterval(interval);
+    interval = setInterval(nextSlide, 4000);
+  }
 
+  let startX = 0, isSwiping = false;
   slidesWrapper.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     isSwiping = true;
   });
-
   slidesWrapper.addEventListener('touchend', e => {
     if (!isSwiping) return;
     let endX = e.changedTouches[0].clientX;
