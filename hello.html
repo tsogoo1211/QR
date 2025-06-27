@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Танилц</title>
+<style>
+* {
+box-sizing: border-box;
+margin: 0; padding: 0;
+}
+
+body {
+background: #111;
+color: #f1f1f1;
+font-family: sans-serif;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
+}
+
+header {
+text-align: center;
+padding: 30px 10px 10px;
+font-size: 2rem;
+font-weight: bold;
+}
+
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+gap: 5px;
+padding: 10px;
+flex: 1;
+}
+
+.grid img {
+width: 100%;
+aspect-ratio: 1 / 1;
+object-fit: cover;
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+cursor: pointer;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grid img:hover {
+transform: scale(1.03);
+box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+}
+
+.slider-container {
+display: none;
+flex-direction: column;
+align-items: center;
+padding: 20px;
+flex: 1;
+}
+
+.slider {
+width: 100%;
+overflow: hidden;
+position: relative;
+}
+
+.slides {
+display: flex;
+transition: transform 0.5s ease;
+padding: 20px 0;
+}
+
+.slide {
+min-width: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.slide img {
+width: 90%;
+max-width: 400px;
+border-radius: 15px;
+box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.inactive img {
+transform: scale(0.9);
+opacity: 0.5;
+filter: blur(1px);
+}
+
+.back-btn {
+margin: 10px;
+padding: 10px 20px;
+background: #007bff;
+color: white;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-size: 16px;
+}
+
+footer {
+background: #000;
+text-align: center;
+padding: 10px;
+font-size: 0.9rem;
+color: #ccc;
+}
+
+footer p {
+margin: 1px 0;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>Танилц</header>
+
+<!-- GRID SECTION -->
+<div class="grid" id="grid">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG0.JPG" onclick="showSlider(0)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG1.JPG" onclick="showSlider(1)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG2.JPG" onclick="showSlider(2)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG3.JPG" onclick="showSlider(3)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG4.JPG" onclick="showSlider(4)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG5.JPG" onclick="showSlider(5)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG6.JPG" onclick="showSlider(6)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG7.JPG" onclick="showSlider(7)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG8.JPG" onclick="showSlider(8)">
+</div>
+
+<!-- SLIDER SECTION -->
+<div class="slider-container" id="sliderContainer">
+<button class="back-btn" onclick="hideSlider()">Буцах</button>
+<div class="slider" id="slider">
+<div class="slides" id="slides"></div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+<p>Утас: 99112233</p>
+<p>И-мэйл: tanilts@example.com</p>
+</footer>
+
+<script>
+const slidesWrapper = document.getElementById('slides');
+const totalSlides = 9;
+let currentIndex = 0;
+let currentGridIndex = 0;
+
+function showSlider(gridIndex) {
+currentGridIndex = gridIndex;
+document.getElementById('grid').style.display = 'none';
+document.getElementById('sliderContainer').style.display = 'flex';
+
+slidesWrapper.innerHTML = '';
+for (let i = 1; i <= totalSlides; i++) {
+const div = document.createElement('div');
+div.className = 'slide';
+const img = document.createElement('img');
+img.src = `https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG${gridIndex}_${i}.JPG`;
+img.alt = `Slide ${i}`;
+div.appendChild(img);
+slidesWrapper.appendChild(div);
+}
+
+currentIndex = 0;
+updateSlideClasses();
+updateSlidePosition();
+}
+
+function hideSlider() {
+document.getElementById('sliderContainer').style.display = 'none';
+document.getElementById('grid').style.display = 'grid';
+}
+
+function updateSlideClasses() {
+const slideEls = document.querySelectorAll('.slide');
+slideEls.forEach((slide, i) => {
+slide.classList.toggle('inactive', i !== currentIndex);
+});
+}
+
+function updateSlidePosition() {
+slidesWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+}
+
+// Swipe
+let startX = 0, currentX = 0;
+const slider = document.getElementById('slider');
+
+slider.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+slider.addEventListener('touchmove', e => currentX = e.touches[0].clientX);
+slider.addEventListener('touchend', () => {
+const diff = startX - currentX;
+if (diff > 50) currentIndex = (currentIndex + 1) % totalSlides;
+else if (diff < -50) currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+updateSlidePosition();
+updateSlideClasses();
+});
+</script>
+
+</body>
+</html>
