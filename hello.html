@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Swipe Slider Танилц</title>
+<style>
+body {
+background: #111;
+color: #fff;
+margin: 0;
+font-family: sans-serif;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
+overflow: hidden;
+}
+
+header {
+text-align: center;
+padding: 20px;
+font-size: 2rem;
+}
+
+.grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 12px;
+padding: 20px;
+flex: 1;
+}
+
+.grid img {
+width: 100%;
+aspect-ratio: 1/1;
+object-fit: cover;
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+cursor: pointer;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grid img:hover {
+transform: scale(1.05);
+box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+}
+
+.slider-container {
+display: none;
+flex-direction: column;
+align-items: center;
+flex: 1;
+width: 100%;
+overflow: hidden;
+}
+
+.slider {
+display: flex;
+width: 100%;
+transition: transform 0.3s ease;
+}
+
+.slide {
+min-width: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.slide img {
+max-width: 90%;
+max-height: 80vh;
+border-radius: 12px;
+box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+}
+
+.back-btn {
+margin: 20px;
+padding: 10px 20px;
+background: #007bff;
+color: white;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+}
+
+footer {
+text-align: center;
+padding: 15px;
+background: #000;
+color: #ccc;
+font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+
+<header>Танилц</header>
+
+<!-- Grid хэсэг -->
+<div class="grid" id="grid">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG0.JPG" onclick="showSlider(0)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG1.JPG" onclick="showSlider(1)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG2.JPG" onclick="showSlider(2)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG3.JPG" onclick="showSlider(3)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG4.JPG" onclick="showSlider(4)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG5.JPG" onclick="showSlider(5)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG6.JPG" onclick="showSlider(6)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG7.JPG" onclick="showSlider(7)">
+<img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG8.JPG" onclick="showSlider(8)">
+</div>
+
+<!-- Swipe Slider хэсэг -->
+<div class="slider-container" id="sliderContainer">
+<button class="back-btn" onclick="hideSlider()">Буцах</button>
+<div class="slider" id="slider"></div>
+</div>
+
+<footer>
+<p>Утас: 99112233</p>
+<p>И-мэйл: tanilts@example.com</p>
+</footer>
+
+<script>
+const totalSlides = 10;
+let currentGridIndex = 0;
+let currentIndex = 0;
+const slider = document.getElementById('slider');
+
+function showSlider(gridIndex) {
+currentGridIndex = gridIndex;
+document.getElementById('grid').style.display = 'none';
+document.getElementById('sliderContainer').style.display = 'flex';
+
+slider.innerHTML = '';
+
+for (let i = 0; i < totalSlides; i++) {
+const div = document.createElement('div');
+div.className = 'slide';
+const img = document.createElement('img');
+img.src = `https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG${gridIndex}_${i+1}.JPG`;
+div.appendChild(img);
+slider.appendChild(div);
+}
+
+currentIndex = 0;
+updateSlider();
+
+// History push
+history.pushState({ sliderOpen: true }, null, '');
+}
+
+function hideSlider() {
+document.getElementById('sliderContainer').style.display = 'none';
+document.getElementById('grid').style.display = 'grid';
+
+// History back
+if (history.state && history.state.sliderOpen) {
+history.back();
+}
+}
+
+function updateSlider() {
+slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+}
+
+// Swipe logic
+let isDragging = false;
+let startX = 0;
+
+slider.addEventListener('mousedown', e => {
+isDragging = true;
+startX = e.clientX;
+});
+
+slider.addEventListener('mousemove', e => {
+if (!isDragging) return;
+const diff = e.clientX - startX;
+if (diff > 50) {
+prevSlide();
+startX = e.clientX;
+} else if (diff < -50) {
+nextSlide();
+startX = e.clientX;
+}
+});
+
+slider.addEventListener('mouseup', () => isDragging = false);
+slider.addEventListener('mouseleave', () => isDragging = false);
+
+slider.addEventListener('touchstart', e => {
+isDragging = true;
+startX = e.touches[0].clientX;
+});
+
+slider.addEventListener('touchmove', e => {
+if (!isDragging) return;
+const diff = e.touches[0].clientX - startX;
+if (diff > 50) {
+prevSlide();
+startX = e.touches[0].clientX;
+} else if (diff < -50) {
+nextSlide();
+startX = e.touches[0].clientX;
+}
+});
+
+slider.addEventListener('touchend', () => isDragging = false);
+
+function nextSlide() {
+if (currentIndex < totalSlides - 1) currentIndex++;
+updateSlider();
+}
+
+function prevSlide() {
+if (currentIndex > 0) currentIndex--;
+updateSlider();
+}
+
+// Back товч дарахад slider хаах
+window.addEventListener('popstate', (event) => {
+if (event.state && event.state.sliderOpen) {
+hideSlider();
+}
+});
+</script>
+
+</body>
+</html>
