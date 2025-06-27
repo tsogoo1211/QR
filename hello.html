@@ -1,9 +1,9 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="mn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>3D Carousel Танилц</title>
+  <title>3D Swipe Carousel</title>
   <style>
     body {
       background: #111;
@@ -13,7 +13,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     header {
@@ -27,6 +27,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       padding: 20px;
+      flex: 1;
     }
 
     .grid img {
@@ -48,33 +49,30 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      perspective: 1000px;
+      perspective: 1200px;
       flex: 1;
     }
 
     .carousel {
       position: relative;
-      width: 300px;
-      height: 300px;
+      width: 100%;
+      height: 400px;
       transform-style: preserve-3d;
-      animation: spin 20s infinite linear;
+      transform: rotateY(0deg);
+      transition: transform 0.5s ease;
     }
 
     .carousel img {
       position: absolute;
       left: 50%;
       top: 50%;
-      transform-origin: center center -400px;
+      transform-origin: center center -500px;
       border-radius: 10px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-      width: 250px;
-      height: 250px;
+      width: 300px;
+      height: 300px;
       object-fit: cover;
-    }
-
-    @keyframes spin {
-      from { transform: rotateY(0deg); }
-      to { transform: rotateY(360deg); }
+      transform: translate(-50%, -50%);
     }
 
     .back-btn {
@@ -127,20 +125,21 @@
   <script>
     const totalSlides = 10;
     let currentGridIndex = 0;
+    let rotationY = 0;
+    const carousel = document.getElementById('carousel');
 
     function showCarousel(gridIndex) {
       currentGridIndex = gridIndex;
       document.getElementById('grid').style.display = 'none';
       document.getElementById('carouselContainer').style.display = 'flex';
 
-      const carousel = document.getElementById('carousel');
       carousel.innerHTML = '';
 
       const angle = 360 / totalSlides;
-      for (let i = 1; i <= totalSlides; i++) {
+      for (let i = 0; i < totalSlides; i++) {
         const img = document.createElement('img');
-        img.src = `https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG${gridIndex}_${i}.JPG`;
-        img.style.transform = `rotateY(${angle * (i - 1)}deg) translateZ(400px)`;
+        img.src = `https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG${gridIndex}_${i+1}.JPG`;
+        img.style.transform = `rotateY(${angle * i}deg) translateZ(500px)`;
         carousel.appendChild(img);
       }
     }
@@ -149,6 +148,42 @@
       document.getElementById('carouselContainer').style.display = 'none';
       document.getElementById('grid').style.display = 'grid';
     }
+
+    // Swipe logic
+    let isDragging = false;
+    let startX = 0;
+
+    carousel.addEventListener('mousedown', e => {
+      isDragging = true;
+      startX = e.clientX;
+    });
+
+    carousel.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      const diff = e.clientX - startX;
+      rotationY += diff * 0.3;
+      carousel.style.transform = `rotateY(${rotationY}deg)`;
+      startX = e.clientX;
+    });
+
+    carousel.addEventListener('mouseup', () => isDragging = false);
+    carousel.addEventListener('mouseleave', () => isDragging = false);
+
+    // Touch support
+    carousel.addEventListener('touchstart', e => {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+    });
+
+    carousel.addEventListener('touchmove', e => {
+      if (!isDragging) return;
+      const diff = e.touches[0].clientX - startX;
+      rotationY += diff * 0.3;
+      carousel.style.transform = `rotateY(${rotationY}deg)`;
+      startX = e.touches[0].clientX;
+    });
+
+    carousel.addEventListener('touchend', () => isDragging = false);
   </script>
 
 </body>
