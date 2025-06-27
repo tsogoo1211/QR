@@ -16,42 +16,58 @@
     }
     header {
       text-align: center;
-      padding: 5px 10px 10px; /* доошлуулсан */
-      font-size: 1.6rem;
+      padding: 5px 10px 15px;
+      font-size: 1.8rem;
       font-weight: bold;
+      animation: fadeDown 0.6s ease;
     }
     .grid {
       display: grid;
-      grid-gap: 1px; /* бараг нийлсэн мэт */
+      grid-gap: 2px;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      padding: 5px;
+      padding: 4px;
       flex: 1;
+      animation: fadeIn 1s ease;
     }
     .grid img {
       width: 100%;
-      aspect-ratio: 1/1.2; /* өндөр намхан */
+      aspect-ratio: 1/1.2;
       object-fit: cover;
-      border-radius: 0; /* булангууд нийлсэн мэт */
       cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 0;
+      animation: popIn 0.5s ease forwards;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
+    .grid img:nth-child(1) { animation-delay: 0.1s; }
+    .grid img:nth-child(2) { animation-delay: 0.2s; }
+    .grid img:nth-child(3) { animation-delay: 0.3s; }
+    .grid img:nth-child(4) { animation-delay: 0.4s; }
+    .grid img:nth-child(5) { animation-delay: 0.5s; }
+    .grid img:nth-child(6) { animation-delay: 0.6s; }
+    .grid img:nth-child(7) { animation-delay: 0.7s; }
+    .grid img:nth-child(8) { animation-delay: 0.8s; }
+    .grid img:nth-child(9) { animation-delay: 0.9s; }
+
     .grid img:hover {
-      transform: scale(1.02);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      transform: scale(1.05) rotateZ(2deg);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
     }
     .slider-container {
       display: none;
       flex-direction: column;
       align-items: center;
       flex: 1;
-      padding: 5px;
+      padding: 10px;
+      animation: slideUp 0.5s ease forwards;
     }
     .slider {
       position: relative;
       width: 100%;
       max-width: 500px;
       overflow: hidden;
-      border-radius: 5px;
+      border-radius: 8px;
     }
     .slides {
       display: flex;
@@ -63,8 +79,8 @@
       justify-content: center;
       align-items: center;
       opacity: 0;
-      transform: scale(0.96);
-      transition: all 0.4s ease;
+      transform: scale(0.9);
+      transition: all 0.5s ease;
     }
     .slide.active {
       opacity: 1;
@@ -72,24 +88,25 @@
     }
     .slide img {
       width: 100%;
-      border-radius: 5px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
     }
     .controls {
-      margin: 10px 0 0;
+      margin: 15px 0 0;
       display: flex;
       justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
     }
     .controls button {
-      padding: 8px 15px;
+      padding: 10px 18px;
       font-size: 0.9rem;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       background: #007bff;
       color: white;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
     .controls button:hover {
       background: #0056b3;
@@ -97,9 +114,26 @@
     footer {
       background: #000;
       text-align: center;
-      padding: 5px;
+      padding: 6px;
       font-size: 0.85rem;
       color: #ccc;
+    }
+
+    /* Animations */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      to { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
