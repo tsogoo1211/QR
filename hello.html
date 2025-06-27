@@ -44,7 +44,6 @@
       transform: scale(1.05) rotateZ(2deg);
       box-shadow: 0 6px 20px rgba(0,0,0,0.5);
     }
-    .grid img:nth-child(n) { animation-delay: calc(var(--i) * 0.1s); }
     .slider-container {
       display: none;
       flex-direction: column;
@@ -213,6 +212,9 @@
     sliderContainer.style.display = 'flex';
     updateSlide();
     startAutoPlay();
+
+    // History-д slider нээгдсэн гэж нэмэх
+    history.pushState({ sliderOpen: true }, '');
   }
 
   function hideSlider() {
@@ -220,6 +222,11 @@
     grid.style.display = 'grid';
     clearInterval(interval);
   }
+
+  // Утасны Back товч дарахад Slider хаагдах
+  window.addEventListener('popstate', (event) => {
+    hideSlider();
+  });
 
   function updateSlide() {
     document.querySelectorAll('.slide').forEach((slide, idx) => {
