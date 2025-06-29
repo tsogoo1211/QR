@@ -13,8 +13,8 @@
       font-family: sans-serif;
       display: flex;
       flex-direction: column;
-      align-items: center; /* Төвд */
-      justify-content: center; /* Төвд */
+      align-items: center;
+      justify-content: center;
     }
     header {
       text-align: center;
@@ -24,8 +24,8 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 100px); /* 3x3 */
-      grid-template-rows: repeat(3, 100px); /* 3x3 */
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
       grid-gap: 4px;
       justify-content: center;
       align-content: center;
@@ -33,7 +33,7 @@
     }
     .grid img {
       width: 100%;
-      height: 100px; /* Өндөр 100px */
+      height: 100px;
       object-fit: cover;
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -50,28 +50,35 @@
       padding: 10px;
     }
     .slider {
-      position: relative;
+      perspective: 1200px;
+      overflow: hidden;
       width: 100%;
       max-width: 500px;
-      overflow: hidden;
-      border-radius: 8px;
     }
     .slides {
       display: flex;
-      transition: transform 0.5s ease;
+      transition: transform 3s ease;
     }
     .slide {
       min-width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      backface-visibility: hidden;
+      transform-origin: left center;
+      transform-style: preserve-3d;
       opacity: 0;
-      transform: scale(0.9);
-      transition: all 0.5s ease;
+      transition: transform 3s ease, opacity 3s ease;
     }
     .slide.active {
+      transform: rotateY(0deg);
       opacity: 1;
-      transform: scale(1);
+      z-index: 2;
+    }
+    .slide.prev {
+      transform: rotateY(-180deg);
+      opacity: 0;
+    }
+    .slide.next {
+      transform: rotateY(180deg);
+      opacity: 0;
     }
     .slide img {
       width: 100%;
@@ -210,10 +217,20 @@
   });
 
   function updateSlide() {
-    document.querySelectorAll('.slide').forEach((slide, idx) => {
-      slide.classList.toggle('active', idx === currentIndex);
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach((slide, idx) => {
+      slide.classList.remove('active', 'prev', 'next');
+      if (idx === currentIndex) {
+        slide.classList.add('active');
+      } else if (idx === (currentIndex - 1 + totalSlides) % totalSlides) {
+        slide.classList.add('prev');
+      } else if (idx === (currentIndex + 1) % totalSlides) {
+        slide.classList.add('next');
+      }
     });
+
     slidesWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+
     document.querySelectorAll('.thumbnails img').forEach((thumb, idx) => {
       thumb.classList.toggle('active', idx === currentIndex);
     });
