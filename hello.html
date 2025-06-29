@@ -13,8 +13,8 @@
       font-family: sans-serif;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      align-items: center; /* Төвд */
+      justify-content: center; /* Төвд */
     }
     header {
       text-align: center;
@@ -24,8 +24,8 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 100px);
-      grid-template-rows: repeat(3, 100px);
+      grid-template-columns: repeat(3, 100px); /* 3x3 */
+      grid-template-rows: repeat(3, 100px); /* 3x3 */
       grid-gap: 4px;
       justify-content: center;
       align-content: center;
@@ -33,7 +33,7 @@
     }
     .grid img {
       width: 100%;
-      height: 100px;
+      height: 100px; /* Өндөр 100px */
       object-fit: cover;
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -50,7 +50,6 @@
       padding: 10px;
     }
     .slider {
-      perspective: 1200px; /* Flip хийх 3D орчин */
       position: relative;
       width: 100%;
       max-width: 500px;
@@ -58,42 +57,26 @@
       border-radius: 8px;
     }
     .slides {
-      position: relative;
-      width: 100%;
-      height: 100%;
+      display: flex;
+      transition: transform 0.5s ease;
     }
     .slide {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      transform-origin: left center;
-      transform-style: preserve-3d;
-      opacity: 0;
-      transition: transform 3s ease, opacity 3s ease;
+      min-width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.5s ease;
+    }
+    .slide.active {
+      opacity: 1;
+      transform: scale(1);
     }
     .slide img {
       width: 100%;
       border-radius: 10px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.7);
-    }
-    .slide.active {
-      transform: rotateY(0deg);
-      opacity: 1;
-      z-index: 2;
-    }
-    .slide.prev {
-      transform: rotateY(-180deg);
-      opacity: 0;
-      z-index: 1;
-    }
-    .slide.next {
-      transform: rotateY(180deg);
-      opacity: 0;
-      z-index: 1;
     }
     .thumbnails {
       display: flex;
@@ -227,18 +210,10 @@
   });
 
   function updateSlide() {
-    const slides = document.querySelectorAll('.slide');
-    slides.forEach((slide, idx) => {
-      slide.classList.remove('active', 'prev', 'next');
-      if (idx === currentIndex) {
-        slide.classList.add('active');
-      } else if (idx === (currentIndex - 1 + totalSlides) % totalSlides) {
-        slide.classList.add('prev');
-      } else if (idx === (currentIndex + 1) % totalSlides) {
-        slide.classList.add('next');
-      }
+    document.querySelectorAll('.slide').forEach((slide, idx) => {
+      slide.classList.toggle('active', idx === currentIndex);
     });
-
+    slidesWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
     document.querySelectorAll('.thumbnails img').forEach((thumb, idx) => {
       thumb.classList.toggle('active', idx === currentIndex);
     });
@@ -256,7 +231,7 @@
 
   function startAutoPlay() {
     clearInterval(interval);
-    interval = setInterval(nextSlide, 5000); // Автомат гүйлгэх хугацаа
+    interval = setInterval(nextSlide, 4000);
   }
 
   let startX = 0, isSwiping = false;
