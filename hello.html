@@ -13,36 +13,34 @@
       font-family: sans-serif;
       display: flex;
       flex-direction: column;
+      align-items: center; /* Төвд */
+      justify-content: center; /* Төвд */
     }
     header {
       text-align: center;
-      padding: 10px;
-      font-size: 1.8rem;
+      padding: 5px;
+      font-size: 1.5rem;
       font-weight: bold;
-      animation: fadeDown 0.6s ease;
     }
     .grid {
       display: grid;
-      grid-gap: 2px;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      padding: 4px;
+      grid-template-columns: repeat(3, 100px); /* 3x3 */
+      grid-template-rows: repeat(3, 100px); /* 3x3 */
+      grid-gap: 4px;
+      justify-content: center;
+      align-content: center;
       flex: 1;
-      animation: fadeIn 1s ease;
     }
     .grid img {
       width: 100%;
-      aspect-ratio: 1/1.2;
+      height: 100px; /* Өндөр 100px */
       object-fit: cover;
       cursor: pointer;
-      border-radius: 0;
-      animation: popIn 0.5s ease forwards;
-      opacity: 0;
-      transform: scale(0.9);
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .grid img:hover {
       transform: scale(1.05) rotateZ(2deg);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
     .slider-container {
       display: none;
@@ -50,7 +48,6 @@
       align-items: center;
       flex: 1;
       padding: 10px;
-      animation: slideUp 0.5s ease forwards;
     }
     .slider {
       position: relative;
@@ -127,22 +124,7 @@
       padding: 6px;
       font-size: 0.85rem;
       color: #ccc;
-    }
-
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes popIn {
-      to { opacity: 1; transform: scale(1); }
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -151,15 +133,15 @@
 <header>Танилцуулга</header>
 
 <div class="grid" id="grid">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG0.JPG" style="--i:1;" onclick="showSlider(0)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG1.JPG" style="--i:2;" onclick="showSlider(1)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG2.JPG" style="--i:3;" onclick="showSlider(2)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG3.JPG" style="--i:4;" onclick="showSlider(3)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG4.JPG" style="--i:5;" onclick="showSlider(4)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG5.JPG" style="--i:6;" onclick="showSlider(5)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG6.JPG" style="--i:7;" onclick="showSlider(6)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG7.JPG" style="--i:8;" onclick="showSlider(7)">
-  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG8.JPG" style="--i:9;" onclick="showSlider(8)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG0.JPG" onclick="showSlider(0)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG1.JPG" onclick="showSlider(1)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG2.JPG" onclick="showSlider(2)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG3.JPG" onclick="showSlider(3)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG4.JPG" onclick="showSlider(4)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG5.JPG" onclick="showSlider(5)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG6.JPG" onclick="showSlider(6)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG7.JPG" onclick="showSlider(7)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG8.JPG" onclick="showSlider(8)">
 </div>
 
 <div class="slider-container" id="sliderContainer">
@@ -176,7 +158,7 @@
 
 <footer>
   <p>Утас: 88888888888</p>
-  <p>И-мэйл:8888888@gmail.com</p>
+  <p>И-мэйл: 8888888@gmail.com</p>
 </footer>
 
 <script>
@@ -212,8 +194,6 @@
     sliderContainer.style.display = 'flex';
     updateSlide();
     startAutoPlay();
-
-    // History-д slider нээгдсэн гэж нэмэх
     history.pushState({ sliderOpen: true }, '');
   }
 
@@ -223,9 +203,10 @@
     clearInterval(interval);
   }
 
-  // Утасны Back товч дарахад Slider хаагдах
-  window.addEventListener('popstate', (event) => {
-    hideSlider();
+  window.addEventListener('popstate', () => {
+    if (sliderContainer.style.display === 'flex') {
+      hideSlider();
+    }
   });
 
   function updateSlide() {
@@ -233,7 +214,6 @@
       slide.classList.toggle('active', idx === currentIndex);
     });
     slidesWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
-
     document.querySelectorAll('.thumbnails img').forEach((thumb, idx) => {
       thumb.classList.toggle('active', idx === currentIndex);
     });
