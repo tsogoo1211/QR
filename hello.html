@@ -74,4 +74,181 @@
 
     .thumbnails {
       display: flex;
-      flex-wrap: wrap
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .thumbnails img {
+      width: 55px; height: 55px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.3s, border 0.3s, box-shadow 0.3s;
+    }
+    .thumbnails img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+    }
+    .thumbnails img.active {
+      border: 2px solid #007bff;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+    }
+    .controls button {
+      background: #007bff;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 20px;
+      color: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .controls button:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #777;
+      margin-top: 25px;
+    }
+  </style>
+</head>
+<body>
+
+<header>Flip Танилцуулга</header>
+
+<div class="grid" id="grid">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG0.JPG" onclick="showSlider(0)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG1.JPG" onclick="showSlider(1)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG2.JPG" onclick="showSlider(2)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG3.JPG" onclick="showSlider(3)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG4.JPG" onclick="showSlider(4)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG5.JPG" onclick="showSlider(5)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG6.JPG" onclick="showSlider(6)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG7.JPG" onclick="showSlider(7)">
+  <img src="https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG8.JPG" onclick="showSlider(8)">
+</div>
+
+<div class="slider-container" id="sliderContainer">
+  <div class="slider" id="slider">
+    <div class="slides" id="slides"></div>
+  </div>
+  <div class="thumbnails" id="thumbnails"></div>
+  <div class="controls">
+    <button onclick="prevSlide()">⟨</button>
+    <button onclick="hideSlider()">Буцах</button>
+    <button onclick="nextSlide()">⟩</button>
+  </div>
+</div>
+
+<footer>
+  <p>Утас: 88888888888 | И-мэйл: example@gmail.com</p>
+</footer>
+
+<script>
+  const slidesWrapper = document.getElementById('slides');
+  const thumbsWrapper = document.getElementById('thumbnails');
+  const sliderContainer = document.getElementById('sliderContainer');
+  const grid = document.getElementById('grid');
+
+  let totalSlides = 9;
+  let currentIndex = 0;
+  let interval;
+
+  function showSlider(index) {
+    currentIndex = 0;
+    slidesWrapper.innerHTML = '';
+    thumbsWrapper.innerHTML = '';
+
+    for (let i = 1; i <= totalSlides; i++) {
+      const div = document.createElement('div');
+      div.className = 'slide';
+      const img = document.createElement('img');
+      img.src = `https://raw.githubusercontent.com/tsogoo1211/QR/main/IMG/IMG${index}_${i}.JPG`;
+      div.appendChild(img);
+      slidesWrapper.appendChild(div);
+
+      const thumb = document.createElement('img');
+      thumb.src = img.src;
+      thumb.onclick = () => { currentIndex = i - 1; updateSlide(); };
+      thumbsWrapper.appendChild(thumb);
+    }
+
+    grid.style.display = 'none';
+    sliderContainer.style.display = 'flex';
+    updateSlide();
+    startAutoPlay();
+    history.pushState({ sliderOpen: true }, '');
+  }
+
+  function hideSlider() {
+    sliderContainer.style.display = 'none';
+    grid.style.display = 'grid';
+    clearInterval(interval);
+  }
+
+  window.addEventListener('popstate', () => {
+    if (sliderContainer.style.display === 'flex') {
+      hideSlider();
+    }
+  });
+
+  function updateSlide() {
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach((slide, idx) => {
+      slide.classList.remove('active', 'prev', 'next');
+      if (idx === currentIndex) {
+        slide.classList.add('active');
+      } else if (idx === (currentIndex - 1 + totalSlides) % totalSlides) {
+        slide.classList.add('prev');
+      } else if (idx === (currentIndex + 1) % totalSlides) {
+        slide.classList.add('next');
+      }
+    });
+    slidesWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+    document.querySelectorAll('.thumbnails img').forEach((thumb, idx) => {
+      thumb.classList.toggle('active', idx === currentIndex);
+    });
+  }
+
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    updateSlide();
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    updateSlide();
+  }
+
+  function startAutoPlay() {
+    clearInterval(interval);
+    interval = setInterval(nextSlide, 6000);
+  }
+
+  let startX = 0, isSwiping = false;
+  slidesWrapper.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    isSwiping = true;
+  });
+  slidesWrapper.addEventListener('touchend', e => {
+    if (!isSwiping) return;
+    let endX = e.changedTouches[0].clientX;
+    let diff = startX - endX;
+    if (diff > 50) nextSlide();
+    else if (diff < -50) prevSlide();
+    isSwiping = false;
+  });
+</script>
+
+</body>
+</html>
